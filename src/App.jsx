@@ -6,10 +6,48 @@ import {
   RefreshCw, 
   Clock, 
   Search,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 
-// All Major Indian Cities with Local Market Premia
+// Premium Custom Bullion Logo Component
+const AppLogo = () => (
+  <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.35)]">
+    <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent"></div>
+      <svg 
+        viewBox="0 0 32 32" 
+        className="w-6 h-6 drop-shadow-[0_2px_4px_rgba(245,158,11,0.5)]" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Gold Bullion Bar Shape */}
+        <path 
+          d="M6 18L10 9H22L26 18L21 24H11L6 18Z" 
+          fill="url(#goldGradient)" 
+          stroke="#FCD34D" 
+          strokeWidth="1.2"
+        />
+        {/* Inner facets */}
+        <path d="M10 9L11 24" stroke="#78350F" strokeWidth="0.8" strokeOpacity="0.6" />
+        <path d="M22 9L21 24" stroke="#78350F" strokeWidth="0.8" strokeOpacity="0.6" />
+        <path d="M6 18H26" stroke="#FEF3C7" strokeWidth="0.8" strokeOpacity="0.8" />
+        <circle cx="16" cy="14" r="2" fill="#FFFBEB" fillOpacity="0.9" />
+        
+        <defs>
+          <linearGradient id="goldGradient" x1="6" y1="9" x2="26" y2="24" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#FDE68A" />
+            <stop offset="0.3" stopColor="#F59E0B" />
+            <stop offset="0.7" stopColor="#D97706" />
+            <stop offset="1" stopColor="#B45309" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+);
+
+// All Major Indian Cities
 const ALL_INDIAN_CITIES = [
   // Uttar Pradesh
   { id: 'lucknow', name: 'Lucknow', state: 'Uttar Pradesh', factor: 1.002 },
@@ -75,4 +113,194 @@ const ALL_INDIAN_CITIES = [
 
   // South India
   { id: 'bengaluru', name: 'Bengaluru', state: 'Karnataka', factor: 1.001 },
-  { id: 'hyderabad', name: 'Hyderabad', state: '
+  { id: 'hyderabad', name: 'Hyderabad', state: 'Telangana', factor: 1.001 },
+  { id: 'chennai', name: 'Chennai', state: 'Tamil Nadu', factor: 1.002 },
+  { id: 'coimbatore', name: 'Coimbatore', state: 'Tamil Nadu', factor: 1.002 },
+  { id: 'kochi', name: 'Kochi (Cochin)', state: 'Kerala', factor: 1.001 },
+  { id: 'visakhapatnam', name: 'Visakhapatnam', state: 'Andhra Pradesh', factor: 1.002 },
+  { id: 'bhubaneswar', name: 'Bhubaneswar', state: 'Odisha', factor: 1.003 },
+  { id: 'raipur', name: 'Raipur', state: 'Chhattisgarh', factor: 1.003 }
+];
+
+export default function App() {
+  const [selectedCity, setSelectedCity] = useState(ALL_INDIAN_CITIES[0]);
+  const [goldPerGram, setGoldPerGram] = useState(7450);
+  const [silverPerGram, setSilverPerGram] = useState(86);
+  const [loading, setLoading] = useState(false);
+  const [statusMsg, setStatusMsg] = useState('Syncing live rates...');
+
+  // Modal State
+  const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Calculator states
+  const [weight, setWeight] = useState(10);
+  const [selectedKarat, setSelectedKarat] = useState('22k');
+  const [makingCharge, setMakingCharge] = useState(12);
+
+  const fetchLiveRates = async () => {
+    setLoading(true);
+    setStatusMsg('Updating...');
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/XAU');
+      const data = await res.json();
+      
+      if (data && data.rates && data.rates.INR) {
+        const inrPerOz = data.rates.INR;
+        const liveGoldGram = (inrPerOz / 31.1034768) * 1.15;
+        
+        setGoldPerGram(Math.round(liveGoldGram));
+        setSilverPerGram(Math.round(liveGoldGram / 85));
+        setStatusMsg('Live Rates Synced');
+      } else {
+        setStatusMsg('Market Rates Active');
+      }
+    } catch (err) {
+      console.log('Error fetching live rates:', err);
+      setStatusMsg('Market Rates Active');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveRates();
+  }, []);
+
+  const filteredCities = useMemo(() => {
+    return ALL_INDIAN_CITIES.filter(c => 
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      c.state.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
+  const rate24k10g = Math.round(goldPerGram * 10 * selectedCity.factor);
+  const rate22k10g = Math.round((rate24k10g * 22) / 24);
+  const rate18k10g = Math.round((rate24k10g * 18) / 24);
+  const silver1kg = Math.round(silverPerGram * 1000 * selectedCity.factor);
+
+  const getSelectedGramRate = () => {
+    if (selectedKarat === '24k') return rate24k10g / 10;
+    if (selectedKarat === '22k') return rate22k10g / 10;
+    return rate18k10g / 10;
+  };
+
+  const rawMetalCost = getSelectedGramRate() * (weight || 0);
+  const makingChargesVal = (rawMetalCost * (makingCharge || 0)) / 100;
+  const taxableVal = rawMetalCost + makingChargesVal;
+  const gstVal = taxableVal * 0.03;
+  const finalBill = taxableVal + gstVal;
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 pb-12 font-sans select-none">
+      {/* Header with Custom Logo */}
+      <header className="max-w-md mx-auto flex items-center justify-between py-3 border-b border-slate-800/80">
+        <div className="flex items-center gap-3">
+          <AppLogo />
+          <div>
+            <div className="flex items-center gap-1">
+              <h1 className="text-lg font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">
+                स्वर्ण भाव
+              </h1>
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+              <Clock className="w-3 h-3 text-amber-400" />
+              <span>{statusMsg}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={fetchLiveRates}
+            className={`p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-400/50 transition ${loading ? 'animate-spin text-amber-400' : 'text-slate-300'}`}
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+          
+          <button
+            onClick={() => setIsCityModalOpen(true)}
+            className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/10 to-amber-600/20 border border-amber-500/40 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-amber-300 shadow-sm transition active:scale-95"
+          >
+            <MapPin className="w-3.5 h-3.5 text-amber-400" />
+            <span className="truncate max-w-[80px]">{selectedCity.name}</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-md mx-auto mt-4 space-y-4">
+        {/* Selected City Pill */}
+        <div className="flex items-center justify-between bg-slate-900/60 border border-slate-800/80 px-3.5 py-2 rounded-xl text-xs text-slate-400">
+          <span>Rates in: <strong className="text-amber-300 font-semibold">{selectedCity.name}</strong> ({selectedCity.state})</span>
+          <button 
+            onClick={() => setIsCityModalOpen(true)}
+            className="text-amber-400 underline font-medium hover:text-amber-300 ml-2"
+          >
+            Change
+          </button>
+        </div>
+
+        {/* 24K Pure Gold */}
+        <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-4 shadow-lg relative overflow-hidden">
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                24K PURE GOLD (99.9%)
+              </span>
+              <h2 className="text-3xl font-extrabold text-slate-50 mt-2 tracking-tight">
+                ₹{rate24k10g.toLocaleString('en-IN')}
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">per 10 grams (₹{Math.round(rate24k10g / 10).toLocaleString('en-IN')}/g)</p>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 22K Jewellery Gold */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                22K JEWELLERY GOLD (91.6%)
+              </span>
+              <h2 className="text-2xl font-bold text-slate-50 mt-1.5">
+                ₹{rate22k10g.toLocaleString('en-IN')}
+              </h2>
+              <p className="text-xs text-slate-400">per 10 grams (₹{Math.round(rate22k10g / 10).toLocaleString('en-IN')}/g)</p>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 18K Gold */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-yellow-400/10 text-yellow-300 border border-yellow-400/20">
+                18K GOLD (75.0%)
+              </span>
+              <h2 className="text-2xl font-bold text-slate-50 mt-1.5">
+                ₹{rate18k10g.toLocaleString('en-IN')}
+              </h2>
+              <p className="text-xs text-slate-400">per 10 grams (₹{Math.round(rate18k10g / 10).toLocaleString('en-IN')}/g)</p>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg bg-slate-800 text-slate-400">
+              <span>LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Silver */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-slate-700/50 text-slate-300 border border-slate-600/30">
+                SILVER
