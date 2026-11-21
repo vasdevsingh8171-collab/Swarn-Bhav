@@ -35,6 +35,10 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Grant Android Internet Permissions
+        run: |
+          sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' android/app/src/main/AndroidManifest.xml
+
       - name: Build Debug APK
         run: |
           cd android
