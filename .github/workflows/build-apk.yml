@@ -35,18 +35,40 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Add Internet Permission Cleanly
+      - name: Fix Network Security & Cleartext Permissions
         run: |
           python3 -c "
           path = 'android/app/src/main/AndroidManifest.xml'
           with open(path, 'r') as f:
-              content = f.read()
+              c = f.read()
           perms = '<uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />\n'
-          if 'android.permission.INTERNET' not in content:
-              content = content.replace('<application', perms + '    <application')
-              with open(path, 'w') as f:
-                  f.write(content)
+          if 'android.permission.INTERNET' not in c:
+              c = c.replace('<application', perms + '    <application')
+          if 'android:usesCleartextTraffic' not in c:
+              c = c.replace('<application', '<application android:usesCleartextTraffic=\"true\"')
+          with open(path, 'w') as f:
+              f.write(c)
           "
+
+      - name: Generate & Set Gold App Icon
+        run: |
+          sudo apt-get install -y imagemagick
+          python3 -c "
+          svg = '''<svg width=\"512\" height=\"512\" viewBox=\"0 0 512 512\" xmlns=\"http://www.w3.org/2000/svg\">
+            <rect width=\"512\" height=\"512\" rx=\"110\" fill=\"#020617\"/>
+            <rect x=\"16\" y=\"16\" width=\"480\" height=\"480\" rx=\"94\" fill=\"none\" stroke=\"#f59e0b\" stroke-width=\"16\"/>
+            <path d=\"M110 300 L180 140 H332 L402 300 L320 380 H192 Z\" fill=\"#f59e0b\" stroke=\"#fde68a\" stroke-width=\"14\"/>
+            <circle cx=\"256\" cy=\"230\" r=\"32\" fill=\"#fffbeb\"/>
+          </svg>'''
+          with open('icon.svg', 'w') as f:
+              f.write(svg)
+          "
+          convert -background none icon.svg -resize 512x512 icon.png
+          for dir in android/app/src/main/res/mipmap-*; do
+            convert icon.png -resize 192x192 $dir/ic_launcher.png
+            convert icon.png -resize 192x192 $dir/ic_launcher_round.png
+            convert icon.png -resize 192x192 $dir/ic_launcher_foreground.png
+          done
 
       - name: Build Debug APK
         run: |
