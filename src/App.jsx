@@ -445,9 +445,15 @@ export default function App() {
     </div>
   );
 }
-<footer className="text-center py-6 text-xs text-slate-500">
-  <p>© {new Date().getFullYear()} स्वर्ण भाव</p>
-  <p className="mt-1 font-medium text-slate-400">
-    Designed & Developed by <span className="text-amber-400 font-semibold">Vasdev Singh</span>
-  </p>
-</footer>
+      {/* Main ke theek neeche aur aakhri div se pehle yeh footer paste karein */}
+      <footer className="max-w-md mx-auto text-center py-6 text-xs text-slate-500 border-t border-slate-900 mt-6">
+        <p className="font-semibold text-amber-400">स्वर्ण भाव (Swarn Bhav)</p>
+        <p className="mt-1 text-slate-400">
+          Designed & Developed by <span className="text-amber-300 font-bold">Vasdev Singh</span>
+        </p>
+        <p className="text-[10px] text-slate-600 mt-1">Daily Live Bullion Rates • India</p>
+      </footer>
+    </div>
+  );
+}
+
