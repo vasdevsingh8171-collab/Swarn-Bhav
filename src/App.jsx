@@ -303,4 +303,151 @@ export default function App() {
           <div className="flex justify-between items-start">
             <div>
               <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-slate-700/50 text-slate-300 border border-slate-600/30">
-                SILVER
+                SILVER (99.9%)
+              </span>
+              <h2 className="text-2xl font-bold text-slate-50 mt-1.5">
+                ₹{silver1kg.toLocaleString('en-IN')}
+              </h2>
+              <p className="text-xs text-slate-400">per 1 kg (₹{Math.round(silver1kg / 100).toLocaleString('en-IN')} per 10g)</p>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg bg-slate-800 text-slate-400">
+              <span>LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Jewellery Price & GST Calculator */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+            <Calculator className="w-5 h-5 text-amber-400" />
+            <h3 className="font-semibold text-sm">Jewellery Bill Calculator</h3>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label className="text-slate-400 block mb-1">Weight (grams)</label>
+              <input 
+                type="number"
+                value={weight}
+                onChange={(e) => setWeight(Math.max(0, parseFloat(e.target.value) || 0))}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white font-semibold focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-slate-400 block mb-1">Purity</label>
+              <select 
+                value={selectedKarat}
+                onChange={(e) => setSelectedKarat(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white font-semibold focus:outline-none"
+              >
+                <option value="24k">24K (99.9%)</option>
+                <option value="22k">22K (91.6%)</option>
+                <option value="18k">18K (75.0%)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="text-xs">
+            <label className="text-slate-400 block mb-1">Making Charges (%)</label>
+            <input 
+              type="number"
+              value={makingCharge}
+              onChange={(e) => setMakingCharge(Math.max(0, parseFloat(e.target.value) || 0))}
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white font-semibold focus:outline-none"
+            />
+          </div>
+
+          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-1.5 text-xs">
+            <div className="flex justify-between text-slate-400">
+              <span>Gold Price:</span>
+              <span>₹{Math.round(rawMetalCost).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>Making ({makingCharge}%):</span>
+              <span>₹{Math.round(makingChargesVal).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>GST (3%):</span>
+              <span>₹{Math.round(gstVal).toLocaleString('en-IN')}</span>
+            </div>
+            <div className="flex justify-between font-bold text-amber-400 text-sm pt-2 border-t border-slate-800">
+              <span>Total Bill:</span>
+              <span>₹{Math.round(finalBill).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* City Search Modal Popup */}
+      {isCityModalOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex flex-col justify-end sm:justify-center p-0 sm:p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-2xl max-w-md w-full mx-auto max-h-[85vh] flex flex-col overflow-hidden">
+            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-base text-amber-400">Select City</h3>
+                <p className="text-xs text-slate-400">All Major Indian Cities</p>
+              </div>
+              <button 
+                onClick={() => setIsCityModalOpen(false)}
+                className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search Input Bar */}
+            <div className="p-3 border-b border-slate-800/80">
+              <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2">
+                <Search className="w-4 h-4 text-slate-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search city or state..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-transparent text-sm w-full focus:outline-none text-slate-200"
+                />
+              </div>
+            </div>
+
+            {/* City List */}
+            <div className="flex-1 overflow-y-auto divide-y divide-slate-800/50 p-2">
+              {filteredCities.length > 0 ? (
+                filteredCities.map(city => (
+                  <button
+                    key={city.id}
+                    onClick={() => {
+                      setSelectedCity(city);
+                      setIsCityModalOpen(false);
+                      setSearchQuery('');
+                    }}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition ${
+                      selectedCity.id === city.id ? 'bg-amber-400/10 text-amber-300 font-bold' : 'hover:bg-slate-800/60 text-slate-300'
+                    }`}
+                  >
+                    <div>
+                      <div className="text-sm">{city.name}</div>
+                      <div className="text-[11px] text-slate-500">{city.state}</div>
+                    </div>
+                    {selectedCity.id === city.id && (
+                      <span className="text-xs px-2 py-0.5 rounded bg-amber-400/20 text-amber-300">Selected</span>
+                    )}
+                  </button>
+                ))
+              ) : (
+                <div className="text-center py-8 text-sm text-slate-500">
+                  No city found for "{searchQuery}"
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+<footer className="text-center py-6 text-xs text-slate-500">
+  <p>© {new Date().getFullYear()} स्वर्ण भाव</p>
+  <p className="mt-1 font-medium text-slate-400">
+    Designed & Developed by <span className="text-amber-400 font-semibold">Vasdev Singh</span>
+  </p>
+</footer>
