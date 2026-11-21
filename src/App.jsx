@@ -10,7 +10,6 @@ import {
   Sparkles
 } from 'lucide-react';
 
-// Premium Custom Bullion Logo Component
 const AppLogo = () => (
   <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-yellow-300 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.35)]">
     <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center relative overflow-hidden">
@@ -21,14 +20,12 @@ const AppLogo = () => (
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Gold Bullion Bar Shape */}
         <path 
           d="M6 18L10 9H22L26 18L21 24H11L6 18Z" 
           fill="url(#goldGradient)" 
           stroke="#FCD34D" 
           strokeWidth="1.2"
         />
-        {/* Inner facets */}
         <path d="M10 9L11 24" stroke="#78350F" strokeWidth="0.8" strokeOpacity="0.6" />
         <path d="M22 9L21 24" stroke="#78350F" strokeWidth="0.8" strokeOpacity="0.6" />
         <path d="M6 18H26" stroke="#FEF3C7" strokeWidth="0.8" strokeOpacity="0.8" />
@@ -47,9 +44,7 @@ const AppLogo = () => (
   </div>
 );
 
-// All Major Indian Cities
 const ALL_INDIAN_CITIES = [
-  // Uttar Pradesh
   { id: 'lucknow', name: 'Lucknow', state: 'Uttar Pradesh', factor: 1.002 },
   { id: 'kanpur', name: 'Kanpur', state: 'Uttar Pradesh', factor: 1.002 },
   { id: 'agra', name: 'Agra', state: 'Uttar Pradesh', factor: 1.002 },
@@ -57,69 +52,20 @@ const ALL_INDIAN_CITIES = [
   { id: 'prayagraj', name: 'Prayagraj (Allahabad)', state: 'Uttar Pradesh', factor: 1.002 },
   { id: 'meerut', name: 'Meerut', state: 'Uttar Pradesh', factor: 1.001 },
   { id: 'noida', name: 'Noida / Greater Noida', state: 'Uttar Pradesh', factor: 1.001 },
-  { id: 'gorakhpur', name: 'Gorakhpur', state: 'Uttar Pradesh', factor: 1.003 },
-  { id: 'bareilly', name: 'Bareilly', state: 'Uttar Pradesh', factor: 1.002 },
-  { id: 'aligarh', name: 'Aligarh', state: 'Uttar Pradesh', factor: 1.002 },
-
-  // Delhi NCR
   { id: 'delhi', name: 'Delhi', state: 'Delhi NCR', factor: 1.001 },
-  { id: 'gurugram', name: 'Gurugram (Gurgaon)', state: 'Haryana', factor: 1.001 },
-  { id: 'faridabad', name: 'Faridabad', state: 'Haryana', factor: 1.001 },
-
-  // Maharashtra
+  { id: 'gurugram', name: 'Gurugram', state: 'Haryana', factor: 1.001 },
   { id: 'mumbai', name: 'Mumbai', state: 'Maharashtra', factor: 1.000 },
   { id: 'pune', name: 'Pune', state: 'Maharashtra', factor: 1.001 },
-  { id: 'nagpur', name: 'Nagpur', state: 'Maharashtra', factor: 1.002 },
-  { id: 'nashik', name: 'Nashik', state: 'Maharashtra', factor: 1.001 },
-  { id: 'aurangabad', name: 'Chhatrapati Sambhajinagar', state: 'Maharashtra', factor: 1.002 },
-
-  // Rajasthan
   { id: 'jaipur', name: 'Jaipur', state: 'Rajasthan', factor: 1.001 },
-  { id: 'jodhpur', name: 'Jodhpur', state: 'Rajasthan', factor: 1.002 },
-  { id: 'udaipur', name: 'Udaipur', state: 'Rajasthan', factor: 1.002 },
-  { id: 'kota', name: 'Kota', state: 'Rajasthan', factor: 1.002 },
-  { id: 'bikaner', name: 'Bikaner', state: 'Rajasthan', factor: 1.002 },
-
-  // Gujarat
   { id: 'ahmedabad', name: 'Ahmedabad', state: 'Gujarat', factor: 1.001 },
-  { id: 'surat', name: 'Surat', state: 'Gujarat', factor: 1.001 },
-  { id: 'vadodara', name: 'Vadodara', state: 'Gujarat', factor: 1.001 },
-  { id: 'rajkot', name: 'Rajkot', state: 'Gujarat', factor: 1.002 },
-
-  // Madhya Pradesh
   { id: 'indore', name: 'Indore', state: 'Madhya Pradesh', factor: 1.002 },
   { id: 'bhopal', name: 'Bhopal', state: 'Madhya Pradesh', factor: 1.002 },
-  { id: 'gwalior', name: 'Gwalior', state: 'Madhya Pradesh', factor: 1.002 },
-  { id: 'jabalpur', name: 'Jabalpur', state: 'Madhya Pradesh', factor: 1.002 },
-
-  // Bihar & Jharkhand
   { id: 'patna', name: 'Patna', state: 'Bihar', factor: 1.003 },
-  { id: 'gaya', name: 'Gaya', state: 'Bihar', factor: 1.003 },
-  { id: 'muzaffarpur', name: 'Muzaffarpur', state: 'Bihar', factor: 1.003 },
-  { id: 'ranchi', name: 'Ranchi', state: 'Jharkhand', factor: 1.003 },
-  { id: 'jamshedpur', name: 'Jamshedpur', state: 'Jharkhand', factor: 1.003 },
-
-  // West Bengal & North East
   { id: 'kolkata', name: 'Kolkata', state: 'West Bengal', factor: 1.003 },
-  { id: 'siliguri', name: 'Siliguri', state: 'West Bengal', factor: 1.004 },
-  { id: 'guwahati', name: 'Guwahati', state: 'Assam', factor: 1.004 },
-
-  // Punjab, Haryana & North
   { id: 'chandigarh', name: 'Chandigarh', state: 'Punjab/Haryana', factor: 1.001 },
-  { id: 'ludhiana', name: 'Ludhiana', state: 'Punjab', factor: 1.002 },
-  { id: 'amritsar', name: 'Amritsar', state: 'Punjab', factor: 1.002 },
-  { id: 'dehradun', name: 'Dehradun', state: 'Uttarakhand', factor: 1.002 },
-  { id: 'jammu', name: 'Jammu', state: 'Jammu & Kashmir', factor: 1.003 },
-
-  // South India
   { id: 'bengaluru', name: 'Bengaluru', state: 'Karnataka', factor: 1.001 },
   { id: 'hyderabad', name: 'Hyderabad', state: 'Telangana', factor: 1.001 },
-  { id: 'chennai', name: 'Chennai', state: 'Tamil Nadu', factor: 1.002 },
-  { id: 'coimbatore', name: 'Coimbatore', state: 'Tamil Nadu', factor: 1.002 },
-  { id: 'kochi', name: 'Kochi (Cochin)', state: 'Kerala', factor: 1.001 },
-  { id: 'visakhapatnam', name: 'Visakhapatnam', state: 'Andhra Pradesh', factor: 1.002 },
-  { id: 'bhubaneswar', name: 'Bhubaneswar', state: 'Odisha', factor: 1.003 },
-  { id: 'raipur', name: 'Raipur', state: 'Chhattisgarh', factor: 1.003 }
+  { id: 'chennai', name: 'Chennai', state: 'Tamil Nadu', factor: 1.002 }
 ];
 
 export default function App() {
@@ -129,11 +75,9 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('Syncing live rates...');
 
-  // Modal State
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Calculator states
   const [weight, setWeight] = useState(10);
   const [selectedKarat, setSelectedKarat] = useState('22k');
   const [makingCharge, setMakingCharge] = useState(12);
@@ -193,7 +137,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 pb-12 font-sans select-none">
-      {/* Header with Custom Logo */}
       <header className="max-w-md mx-auto flex items-center justify-between py-3 border-b border-slate-800/80">
         <div className="flex items-center gap-3">
           <AppLogo />
@@ -229,9 +172,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-md mx-auto mt-4 space-y-4">
-        {/* Selected City Pill */}
         <div className="flex items-center justify-between bg-slate-900/60 border border-slate-800/80 px-3.5 py-2 rounded-xl text-xs text-slate-400">
           <span>Rates in: <strong className="text-amber-300 font-semibold">{selectedCity.name}</strong> ({selectedCity.state})</span>
           <button 
@@ -378,7 +319,16 @@ export default function App() {
         </div>
       </main>
 
-      {/* City Search Modal Popup */}
+      {/* Developer Footer */}
+      <footer className="max-w-md mx-auto text-center py-6 text-xs text-slate-500 border-t border-slate-900 mt-6">
+        <p className="font-semibold text-amber-400">स्वर्ण भाव (Swarn Bhav)</p>
+        <p className="mt-1 text-slate-400">
+          Designed & Developed by <span className="text-amber-300 font-bold">Vasdev Singh</span>
+        </p>
+        <p className="text-[10px] text-slate-600 mt-1">Daily Live Bullion Rates • India</p>
+      </footer>
+
+      {/* City Search Modal */}
       {isCityModalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex flex-col justify-end sm:justify-center p-0 sm:p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-2xl max-w-md w-full mx-auto max-h-[85vh] flex flex-col overflow-hidden">
@@ -395,7 +345,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Search Input Bar */}
             <div className="p-3 border-b border-slate-800/80">
               <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2">
                 <Search className="w-4 h-4 text-slate-400" />
@@ -409,7 +358,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* City List */}
             <div className="flex-1 overflow-y-auto divide-y divide-slate-800/50 p-2">
               {filteredCities.length > 0 ? (
                 filteredCities.map(city => (
@@ -445,15 +393,3 @@ export default function App() {
     </div>
   );
 }
-      {/* Main ke theek neeche aur aakhri div se pehle yeh footer paste karein */}
-      <footer className="max-w-md mx-auto text-center py-6 text-xs text-slate-500 border-t border-slate-900 mt-6">
-        <p className="font-semibold text-amber-400">स्वर्ण भाव (Swarn Bhav)</p>
-        <p className="mt-1 text-slate-400">
-          Designed & Developed by <span className="text-amber-300 font-bold">Vasdev Singh</span>
-        </p>
-        <p className="text-[10px] text-slate-600 mt-1">Daily Live Bullion Rates • India</p>
-      </footer>
-    </div>
-  );
-}
-
